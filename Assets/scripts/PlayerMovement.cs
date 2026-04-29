@@ -2,20 +2,30 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public CharacterController controller;
-    public float speed = 12f;
-    public float gravity = -9.81f;
-    Vector3 velocity;
+    public Rigidbody rb;
+    public float speed = 5f;
 
-    void Update()
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        // This stops the physics engine from ever tilting the player
+        rb.freezeRotation = true;
+    }
+
+    void FixedUpdate()
     {
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * speed * Time.deltaTime);
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        // Calculate the target velocity
+        Vector3 targetVelocity = move * speed;
+
+        // Calculate the difference between current and target velocity
+        Vector3 velocityChange = (targetVelocity - rb.linearVelocity);
+        velocityChange.y = 0; // Don't touch the up/down speed!
+
+        rb.AddForce(velocityChange, ForceMode.VelocityChange);
     }
 }

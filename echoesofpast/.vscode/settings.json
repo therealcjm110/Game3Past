@@ -67,5 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "echoesofpast.slnx"
+    "dotnet.defaultSolution": "echoesofpast.slnx",
+    "git.ignoreLimitWarning": true
 }

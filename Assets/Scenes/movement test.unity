@@ -235,6 +235,7 @@ GameObject:
   - component: {fileID: 277365424}
   - component: {fileID: 277365423}
   - component: {fileID: 277365426}
+  - component: {fileID: 277365427}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -344,6 +345,21 @@ MonoBehaviour:
   slideTimer: 0
   slideYScale: 0.5
   slideKey: 306
+--- !u!114 &277365427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277365422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 341161783beec3a439d5fa5127a7f638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeleportAbility
+  teleportDistance: 10
+  teleportKey: 113
+  cooldownTime: 2
 --- !u!1 &340934683
 GameObject:
   m_ObjectHideFlags: 0

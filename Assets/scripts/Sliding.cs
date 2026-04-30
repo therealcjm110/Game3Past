@@ -40,7 +40,8 @@ public class Sliding : MonoBehaviour
         if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0))
             StartSlide();
 
-        if (Input.GetKeyUp(slideKey) && pm.sliding)
+        // If the key is released OR the timer ran out, try to stop
+        if (pm.sliding && (!Input.GetKey(slideKey) || slideTimer <= 0))
             StopSlide();
     }
 
@@ -84,8 +85,10 @@ public class Sliding : MonoBehaviour
 
     private void StopSlide()
     {
-        pm.sliding = false;
+        // Check if it's safe to stand up
+        if (pm.CheckForCeiling()) return;
 
+        pm.sliding = false;
         playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
     }
 }

@@ -28,6 +28,8 @@ public class PlayerMovementAdvanced : MonoBehaviour
     public float crouchSpeed;
     public float crouchYScale;
     private float startYScale;
+    public bool isUnderCeiling; 
+    public LayerMask whatIsCeiling; 
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -102,27 +104,30 @@ public class PlayerMovementAdvanced : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // when to jump
+        // When to jump
         if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
-
             Jump();
-
             Invoke(nameof(ResetJump), jumpCooldown);
         }
 
-        // start crouch
+        // Start crouch
         if (Input.GetKeyDown(crouchKey))
         {
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
 
-        // stop crouch
-        if (Input.GetKeyUp(crouchKey))
+        // Stop crouch logic (Continuous Check)
+        // We check: Are we NOT holding the key AND are we currently crouched?
+        if (!Input.GetKey(crouchKey) && transform.localScale.y != startYScale)
         {
-            transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+            // If there's no ceiling, stand up immediately
+            if (!CheckForCeiling())
+            {
+                transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+            }
         }
     }
 
@@ -141,10 +146,10 @@ public class PlayerMovementAdvanced : MonoBehaviour
         }
 
         // Mode - Crouching
-        else if (Input.GetKey(crouchKey))
+        else if (Input.GetKey(crouchKey) || CheckForCeiling())
         {
             state = MovementState.crouching;
-            desiredMoveSpeed = crouchSpeed;
+            moveSpeed = crouchSpeed;
         }
 
         // Mode - Sprinting
@@ -287,5 +292,11 @@ public class PlayerMovementAdvanced : MonoBehaviour
     public Vector3 GetSlopeMoveDirection(Vector3 direction)
     {
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
+    }
+
+    public bool CheckForCeiling()
+    {
+        // Adjust 0.5f to match your player's width
+        return Physics.SphereCast(transform.position, 0.4f, Vector3.up, out RaycastHit hit, playerHeight * 0.5f);
     }
 }

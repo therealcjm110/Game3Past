@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37b94dfa578f4a54dba0261e5efd53d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  walkSpeed: 4
+  walkSpeed: 5
   sprintSpeed: 10
   slideSpeed: 15
   speedIncreaseMultiplier: 1.5
@@ -265,6 +265,10 @@ MonoBehaviour:
   airMultiplier: 0.4
   crouchSpeed: 3.5
   crouchYScale: 0.5
+  isUnderCeiling: 0
+  whatIsCeiling:
+    serializedVersion: 2
+    m_Bits: 1024
   jumpKey: 32
   sprintKey: 304
   crouchKey: 306

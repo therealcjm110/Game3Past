@@ -263,7 +263,7 @@ MonoBehaviour:
   jumpForce: 7
   jumpCooldown: 0.25
   airMultiplier: 0.4
-  crouchSpeed: 3.5
+  crouchSpeed: 0.5
   crouchYScale: 0.5
   isUnderCeiling: 0
   whatIsCeiling:
@@ -341,6 +341,7 @@ MonoBehaviour:
   playerObj: {fileID: 543429396}
   maxSlideTime: 0.75
   slideForce: 100
+  slideTimer: 0
   slideYScale: 0.5
   slideKey: 306
 --- !u!1 &340934683

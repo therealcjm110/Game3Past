@@ -13,7 +13,7 @@ public class Sliding : MonoBehaviour
     [Header("Sliding")]
     public float maxSlideTime;
     public float slideForce;
-    private float slideTimer;
+    public float slideTimer;
 
     public float slideYScale;
     private float startYScale;
@@ -37,12 +37,21 @@ public class Sliding : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0))
-            StartSlide();
+        // Check if the slide key is pressed
+        if (Input.GetKeyDown(slideKey))
+        {
+            // Only slide if the player is currently sprinting and moving
+            if (pm.state == PlayerMovementAdvanced.MovementState.sprinting && (horizontalInput != 0 || verticalInput != 0))
+            {
+                StartSlide();
+            }
+        }
 
-        // If the key is released OR the timer ran out, try to stop
-        if (pm.sliding && (!Input.GetKey(slideKey) || slideTimer <= 0))
+        // Stop slide logic 
+        if (pm.sliding && (Input.GetKeyUp(slideKey) || slideTimer <= 0))
+        {
             StopSlide();
+        }
     }
 
     private void FixedUpdate()
@@ -58,6 +67,15 @@ public class Sliding : MonoBehaviour
         playerObj.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
         rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
 
+        // Calculate direction and apply a ONE-TIME burst of speed
+        Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+        // If player isn't pressing keys, slide forward based on orientation
+        if (horizontalInput == 0 && verticalInput == 0)
+            rb.AddForce(orientation.forward * slideForce, ForceMode.Impulse);
+        else
+            rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Impulse);
+
         slideTimer = maxSlideTime;
     }
 
@@ -65,20 +83,21 @@ public class Sliding : MonoBehaviour
     {
         Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        // sliding normal
+        // Normal sliding (non-slope)
         if (!pm.OnSlope() || rb.linearVelocity.y > -0.1f)
         {
-            rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
+            // We don't add force here anymore! 
+            // Just let the StartSlide impulse carry us.
 
             slideTimer -= Time.deltaTime;
         }
-
-        // sliding down a slope
+        // Sliding down a slope
         else
         {
             rb.AddForce(pm.GetSlopeMoveDirection(inputDirection) * slideForce, ForceMode.Force);
         }
 
+        // Force an end if the timer runs out
         if (slideTimer <= 0)
             StopSlide();
     }

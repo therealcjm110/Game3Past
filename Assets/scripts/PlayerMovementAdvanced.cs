@@ -66,11 +66,14 @@ public class PlayerMovementAdvanced : MonoBehaviour
         air
     }
 
+    private Sliding slidingScript;
+
     public bool sliding;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        slidingScript = GetComponent<Sliding>();
         rb.freezeRotation = true;
 
         readyToJump = true;
@@ -89,9 +92,24 @@ public class PlayerMovementAdvanced : MonoBehaviour
 
         // handle drag
         if (grounded)
-            rb.linearDamping = groundDrag;
+        {
+            if (sliding) // This is your boolean check
+            {
+                // We use Mathf.Clamp01 to keep the math between 0 and 1
+                float slideProgress = 1f - Mathf.Clamp01(slidingScript.slideTimer / slidingScript.maxSlideTime);
+
+                // Starts at 0.5 drag and ends at 10 drag (stops you quickly at the end)
+                rb.linearDamping = Mathf.Lerp(0.5f, 10f, slideProgress);
+            }
+            else
+            {
+                rb.linearDamping = groundDrag;
+            }
+        }
         else
+        {
             rb.linearDamping = 0;
+        }
     }
 
     private void FixedUpdate()
@@ -149,7 +167,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
         else if (Input.GetKey(crouchKey) || CheckForCeiling())
         {
             state = MovementState.crouching;
-            moveSpeed = crouchSpeed;
+            desiredMoveSpeed = crouchSpeed; // Change moveSpeed to desiredMoveSpeed here!
         }
 
         // Mode - Sprinting

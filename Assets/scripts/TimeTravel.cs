@@ -5,10 +5,15 @@ public class TeleportAbility : MonoBehaviour
     [Header("Settings")]
     public float teleportDistance = 5f;
     public KeyCode teleportKey = KeyCode.E;
+
+    [Header("Cooldown")]
+    public float cooldownTime = 1f;
     private float cooldownTimer;
-    public float cooldownTime = 2f;
+
     private Rigidbody rb;
     private PlayerMovementAdvanced pm;
+
+    private bool teleportedUp = false;
 
     private void Start()
     {
@@ -22,17 +27,25 @@ public class TeleportAbility : MonoBehaviour
 
         if (Input.GetKeyDown(teleportKey) && cooldownTimer <= 0)
         {
-            TeleportUp();
+            ToggleTeleport();
             cooldownTimer = cooldownTime;
         }
     }
 
-    private void TeleportUp()
+    private void ToggleTeleport()
     {
+        if (!teleportedUp)
+        {
+            transform.position += Vector3.up * teleportDistance;
+            teleportedUp = true;
+            Debug.Log("Teleported Up!");
+        }
+        else
+        {
+            transform.position += Vector3.down * teleportDistance;
+            teleportedUp = false;
+            Debug.Log("Teleported Down!");
+        }
 
-        transform.position += Vector3.up * teleportDistance;
-
-
-        Debug.Log("Teleported Upwards!");
     }
 }

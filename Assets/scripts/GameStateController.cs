@@ -10,6 +10,8 @@ public class GameStateController : MonoBehaviour
     public GameObject pausePanel;
     public GameObject gameOverPanel;
     public GameObject gameplayHUD;
+    public GameObject winPanel;
+    public TMPro.TextMeshProUGUI finalTimeDisplay;
 
     private bool isPaused = false;
     private bool isGameOver = false;
@@ -105,7 +107,27 @@ public class GameStateController : MonoBehaviour
         gameplayHUD.SetActive(false);
         pausePanel.SetActive(false);
         gameOverPanel.SetActive(false);
+        if (winPanel != null) winPanel.SetActive(false);
 
         SetMouseState(true); // Show mouse for Main Menu
+    }
+
+    public void TriggerWin(float timeRemaining)
+    {
+
+        float timeTaken = 300f - timeRemaining;
+
+        int minutes = Mathf.FloorToInt(timeTaken / 60);
+        int seconds = Mathf.FloorToInt(timeTaken % 60);
+        int milliSeconds = Mathf.FloorToInt((timeTaken % 1) * 100);
+
+        finalTimeDisplay.text = string.Format("Time Taken: {0:00}:{1:00}:{2:00}", minutes, seconds, milliSeconds);
+
+        winPanel.SetActive(true);
+        gameplayHUD.SetActive(false);
+        Time.timeScale = 0f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }

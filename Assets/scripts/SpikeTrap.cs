@@ -4,24 +4,34 @@ using System.Collections;
 public class SpikeTrap : MonoBehaviour
 {
     [Header("Settings")]
-    public Transform spikeVisual;
-    public float delayBeforePopUp = 0.5f;
-    public float activeTime = 1f;
-    public float retractSpeed = 5f;
+    public GameObject spikeVisual;
+    public float warningDelay = 0.6f;
+    public float moveSpeed = 8f;
+    public float activeTime = 1.2f;
 
     private Vector3 hiddenPos;
-    private Vector3 activePos;
+    private Vector3 upPos;
     private bool isTriggered = false;
+    private Collider spikeTrigger;
 
     void Start()
     {
-        hiddenPos = spikeVisual.localPosition;
-        activePos = hiddenPos + new Vector3(0, 1.5f, 0); // Adjust height as needed
+        if (spikeVisual == null) return;
+
+        hiddenPos = spikeVisual.transform.localPosition;
+        upPos = hiddenPos + new Vector3(0, 2f, 0);
+
+        // Find the collider on the spikes and disable it initially
+        spikeTrigger = spikeVisual.GetComponent<Collider>();
+        if (spikeTrigger != null) spikeTrigger.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !isTriggered)
+        bool hitPlayer = other.CompareTag("Player") ||
+                        (other.transform.parent != null && other.transform.parent.CompareTag("Player"));
+
+        if (hitPlayer && !isTriggered)
         {
             StartCoroutine(TriggerSpikes());
         }
@@ -31,23 +41,35 @@ public class SpikeTrap : MonoBehaviour
     {
         isTriggered = true;
 
-        // Wait for the player to keep running
-        yield return new WaitForSeconds(delayBeforePopUp);
+        // 1. Warning Delay
+        yield return new WaitForSeconds(warningDelay);
 
-        // Snap spikes up!
-        spikeVisual.localPosition = activePos;
+        // Enable the kill trigger just before moving up
+        if (spikeTrigger != null) spikeTrigger.enabled = true;
 
-        // Check if player is still touching it when it pops up
-        // (You can add a small trigger here or use a simple distance check)
-
-        yield return new WaitForSeconds(activeTime);
-
-        // Retract slowly
-        while (Vector3.Distance(spikeVisual.localPosition, hiddenPos) > 0.01f)
+        // 2. Move Up
+        float t = 0;
+        while (t < 1)
         {
-            spikeVisual.localPosition = Vector3.Lerp(spikeVisual.localPosition, hiddenPos, Time.deltaTime * retractSpeed);
+            t += Time.deltaTime * moveSpeed;
+            spikeVisual.transform.localPosition = Vector3.Lerp(hiddenPos, upPos, t);
             yield return null;
         }
+
+        // 3. Stay Up
+        yield return new WaitForSeconds(activeTime);
+
+        // 4. Move Down
+        t = 0;
+        while (t < 1)
+        {
+            t += Time.deltaTime * moveSpeed;
+            spikeVisual.transform.localPosition = Vector3.Lerp(upPos, hiddenPos, t);
+            yield return null;
+        }
+
+        // Disable the kill trigger once they are hidden
+        if (spikeTrigger != null) spikeTrigger.enabled = false;
 
         isTriggered = false;
     }

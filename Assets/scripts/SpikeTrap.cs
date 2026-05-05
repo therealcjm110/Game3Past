@@ -19,9 +19,10 @@ public class SpikeTrap : MonoBehaviour
         if (spikeVisual == null) return;
 
         hiddenPos = spikeVisual.transform.localPosition;
+
+
         upPos = hiddenPos + new Vector3(0, 2f, 0);
 
-        // Find the collider on the spikes and disable it initially
         spikeTrigger = spikeVisual.GetComponent<Collider>();
         if (spikeTrigger != null) spikeTrigger.enabled = false;
     }

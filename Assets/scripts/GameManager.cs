@@ -29,13 +29,13 @@ public class GameManager : MonoBehaviour
         RespawnPlayer();
     }
 
+
     public void RespawnPlayer()
     {
         if (currentCheckpoint == null || player == null) return;
 
         Rigidbody rb = player.GetComponent<Rigidbody>();
 
-        // 1. Disable physics to prevent 'interpolation' fighting the move
         if (rb != null)
         {
             rb.isKinematic = true;
@@ -43,14 +43,26 @@ public class GameManager : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        // 2. Move the player
         player.transform.position = currentCheckpoint.position;
         player.transform.rotation = currentCheckpoint.rotation;
 
-        // 3. Re-enable physics after the move
         if (rb != null)
             rb.isKinematic = false;
 
-        Debug.Log("Forced Respawn to: " + currentCheckpoint.name);
+        
+        SwapMechanic swap = player.GetComponent<SwapMechanic>();
+
+        if (swap == null) swap = Object.FindAnyObjectByType<SwapMechanic>();
+
+        if (swap != null)
+        {
+            swap.ResetUI();
+        }
+
+        TeleportAbility tp = player.GetComponent<TeleportAbility>();
+        if (tp != null)
+        {
+            tp.ResetTeleportState();
+        }
     }
 }

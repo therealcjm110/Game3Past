@@ -8,52 +8,66 @@ public class TeleportAbility : MonoBehaviour
 
     [Header("Cooldown")]
     public float cooldownTime = 0.5f;
-    private float nextReadyTime; // The exact timestamp when teleporting is allowed again
+    private float nextReadyTime;
 
     private Rigidbody rb;
-    private PlayerMovementAdvanced pm;
     private bool teleportedUp = false;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        pm = GetComponent<PlayerMovementAdvanced>();
-
-        // Safety check: ensure we don't start locked
         nextReadyTime = 0f;
     }
 
     private void Update()
     {
-        // Time.time is the current game time in seconds
-        if (Input.GetKeyDown(teleportKey) && Time.time >= nextReadyTime)
+        if (Time.time < nextReadyTime) return;
+
+        if (Input.GetKeyDown(teleportKey))
         {
-            ToggleTeleport();
+            nextReadyTime = Time.time + cooldownTime;
+            ExecuteTeleport();
         }
 
-        if (Input.GetKeyDown(KeyCode.R)) // Press R to restart at checkpoint
+        if (Input.GetKeyDown(KeyCode.R))
         {
             GameManager.instance.RespawnPlayer();
         }
     }
 
-    private void ToggleTeleport()
+    private void ExecuteTeleport()
     {
-        // Update the timestamp immediately
-        // Current time + cooldown = the soonest we can do this again
-        nextReadyTime = Time.time + cooldownTime;
 
         if (!teleportedUp)
         {
-            transform.position += Vector3.up * teleportDistance;
+            MovePlayer(Vector3.up * teleportDistance);
             teleportedUp = true;
-            Debug.Log("Teleported Up!");
+            Debug.Log("Teleported UP");
         }
         else
         {
-            transform.position += Vector3.down * teleportDistance;
+            MovePlayer(Vector3.down * teleportDistance);
             teleportedUp = false;
-            Debug.Log("Teleported Down!");
+            Debug.Log("Teleported DOWN");
         }
+    }
+
+    private void MovePlayer(Vector3 displacement)
+    {
+        if (rb != null)
+        {
+            // rb.MovePosition is 'smoother' for objects with velocity
+            rb.MovePosition(rb.position + displacement);
+        }
+        else
+        {
+            // Fallback if Rigidbody is missing
+            transform.position += displacement;
+        }
+    }
+    public void ResetTeleportState()
+    {
+        teleportedUp = false;
+        nextReadyTime = 0f;
     }
 }

@@ -30,6 +30,11 @@ public class TeleportAbility : MonoBehaviour
         {
             ToggleTeleport();
         }
+
+        if (Input.GetKeyDown(KeyCode.R)) // Press R to restart at checkpoint
+        {
+            GameManager.instance.RespawnPlayer();
+        }
     }
 
     private void ToggleTeleport()

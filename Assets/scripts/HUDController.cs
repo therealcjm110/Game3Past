@@ -32,6 +32,18 @@ public class HUDController : MonoBehaviour
 
             speedText.text = Mathf.RoundToInt(smoothSpeed).ToString() + " MPH";
         }
+
+        if (timeRemaining > 0)
+        {
+            timeRemaining -= Time.deltaTime;
+            // Update your text here
+        }
+        else
+        {
+            timeRemaining = 0;
+            // Call the Game Over screen
+            GameStateController.instance.TriggerGameOver();
+        }
     }
 
     void DisplayPreciseTime(float timeToDisplay)

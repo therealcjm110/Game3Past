@@ -2684,7 +2684,7 @@ MonoBehaviour:
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
   groundDrag: 5
-  jumpForce: 4
+  jumpForce: 10
   jumpCooldown: 0.25
   airMultiplier: 0.4
   crouchSpeed: 2
@@ -5350,7 +5350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HUDController
   timerText: {fileID: 1986059103}
-  timeRemaining: 600
+  timeRemaining: 300
   speedText: {fileID: 1826679797}
   playerRb: {fileID: 277365424}
 --- !u!1 &745562904

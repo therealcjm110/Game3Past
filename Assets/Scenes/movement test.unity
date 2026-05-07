@@ -5351,6 +5351,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HUDController
   timerText: {fileID: 1986059103}
   timeRemaining: 300
+  warningThreshold: 60
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  flashSpeed: 5
   speedText: {fileID: 1826679797}
   playerRb: {fileID: 277365424}
 --- !u!1 &745562904

@@ -46,6 +46,9 @@ public class PlayerMovementAdvanced : MonoBehaviour
     private RaycastHit slopeHit;
     private bool exitingSlope;
 
+    [Header("Hazards & Checkpoints")]
+    public LayerMask whatIsKill;
+    private Vector3 lastCheckpointPos;
 
     public Transform orientation;
 
@@ -79,6 +82,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
         readyToJump = true;
 
         startYScale = transform.localScale.y;
+
     }
 
     private void Update()

@@ -14,7 +14,6 @@ public class MouseLook : MonoBehaviour
 
     private void Start()
     {
-        // Only lock the cursor if the game is actually running
         if (Time.timeScale > 0)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -24,18 +23,20 @@ public class MouseLook : MonoBehaviour
 
     private void Update()
     {
-        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+
+        if (Time.timeScale == 0 || Cursor.lockState != CursorLockMode.Locked) return;
+
+        float sensitivityMultiplier = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
+
+        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX * sensitivityMultiplier;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY * sensitivityMultiplier;
 
         yRotation += mouseX;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        //rotate cam an orientation
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
-
     }
-
 }

@@ -31,7 +31,14 @@ public class SwapMechanic : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(swapKey) && isReady)
+
+        KeyCode activeKey = (GameStateController.instance != null)
+            ? GameStateController.instance.GetTeleportKey()
+            : swapKey;
+
+        if (Time.timeScale == 0) return;
+
+        if (Input.GetKeyDown(activeKey) && isReady)
         {
             TriggerSwap();
         }
@@ -41,12 +48,14 @@ public class SwapMechanic : MonoBehaviour
             float timePassed = Time.time - lastSwapTime;
             float cooldownProgress = timePassed / swapCooldown;
 
-            cooldownOverlay.fillAmount = 1 - cooldownProgress;
+            if (cooldownOverlay != null)
+                cooldownOverlay.fillAmount = 1 - cooldownProgress;
 
             if (cooldownProgress >= 1)
             {
                 isReady = true;
-                cooldownOverlay.fillAmount = 0;
+                if (cooldownOverlay != null)
+                    cooldownOverlay.fillAmount = 0;
             }
         }
     }
@@ -56,19 +65,22 @@ public class SwapMechanic : MonoBehaviour
         if (colorSprites.Length > 0)
         {
             currentIndex = (currentIndex + 1) % colorSprites.Length;
-            colorDisplay.sprite = colorSprites[currentIndex];
+            if (colorDisplay != null)
+                colorDisplay.sprite = colorSprites[currentIndex];
         }
 
         lastSwapTime = Time.time;
         isReady = false;
-        cooldownOverlay.fillAmount = 1;
+
+        if (cooldownOverlay != null)
+            cooldownOverlay.fillAmount = 1;
     }
 
-    // Call this from GameManager.RespawnPlayer()
     public void ResetUI()
     {
         isReady = true;
         currentIndex = 0;
+        lastSwapTime = -swapCooldown; 
 
         if (colorDisplay != null && colorSprites.Length > 0)
             colorDisplay.sprite = colorSprites[0];

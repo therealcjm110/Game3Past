@@ -68,23 +68,18 @@ public class TeleportAbility : MonoBehaviour
     {
         if (rb != null)
         {
-            // 1. Tell the physics engine we are manually moving the object
-            rb.interpolation = RigidbodyInterpolation.None;
+            // We move the position, but we DON'T touch rb.linearVelocity.
+            // This keeps your current speed and direction (momentum).
 
-            // 2. Clear old velocity so the teleport is clean
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-
-            // 3. Move the position
             rb.position += displacement;
-            transform.position = rb.position; // Sync transform immediately
+            transform.position = rb.position; // Sync the transform immediately
 
-            // 4. Turn interpolation back on for smooth movement
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            // Optional: If you find yourself getting stuck in walls, 
+            // you can use rb.MovePosition(rb.position + displacement);
+            // but adding directly to rb.position is better for 'instant' feel.
         }
         else
         {
-            // Fallback if no Rigidbody exists
             transform.position += displacement;
         }
     }

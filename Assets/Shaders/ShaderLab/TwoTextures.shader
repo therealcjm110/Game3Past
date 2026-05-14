@@ -42,6 +42,7 @@ Shader "Custom/TwoTextures" {
         fixed4 texel1 = tex2D(_Texture1, i.uv);
         fixed4 texel2 = tex2D(_Texture2, i.uv2);
         fixed4 texel = texel1 * texel2;
+        // texel.a = 1.0;
 
         return texel;
       }

@@ -12,6 +12,7 @@ public class GameStateController : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject gameplayHUD;
     public GameObject winPanel;
+    public GameObject nameEntry;
     public TMPro.TextMeshProUGUI finalTimeDisplay;
 
     [Header("Settings & Controls")]
@@ -155,6 +156,10 @@ public class GameStateController : MonoBehaviour
         gameplayHUD.SetActive(false);
         Time.timeScale = 0f;
         SetMouseState(true);
+    }
+
+    public void EnterName(){
+        // save name as public static variable
     }
 
     // --- REBINDING LOGIC ---

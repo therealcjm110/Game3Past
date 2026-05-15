@@ -5,9 +5,7 @@ Shader "Custom/TwoTextures" {
   }
 
   SubShader {
-    Tags {"Queue"="Transparent" }
-    Blend SrcAlpha OneMinusSrcAlpha
-    
+     
     Pass {
       CGPROGRAM
       
@@ -41,8 +39,14 @@ Shader "Custom/TwoTextures" {
       fixed4 frag(v2f i) : COLOR {
         fixed4 texel1 = tex2D(_Texture1, i.uv);
         fixed4 texel2 = tex2D(_Texture2, i.uv2);
-        fixed4 texel = texel1 * texel2;
-        // texel.a = 1.0;
+        fixed4 texel;
+        if (texel2.a < 0.1){
+          texel = texel1;
+        } 
+        else {
+          texel = texel1 * texel2;
+        }
+        //texel.a = 1.0;
 
         return texel;
       }
